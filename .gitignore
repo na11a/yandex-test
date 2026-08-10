@@ -1,0 +1,17 @@
+# Secrets / local config
+.env
+
+# Slop board internals (not part of the deliverable)
+.slop/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Test/report artifacts
+report.html
+*.xml
+assets/
