@@ -1,0 +1,5 @@
+pytest>=8.2
+requests>=2.31
+python-dotenv>=1.0
+jsonschema>=4.22
+pytest-html>=4.1
