@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Link object",
+  "type": "object",
+  "required": ["href", "method", "templated"],
+  "properties": {
+    "href": { "type": "string" },
+    "method": { "type": "string" },
+    "templated": { "type": "boolean" }
+  }
+}
