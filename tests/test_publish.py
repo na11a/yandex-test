@@ -1,3 +1,5 @@
+import time
+
 import pytest
 
 from client.disk_client import DiskClient
@@ -13,6 +15,19 @@ def _meta(client: DiskClient, path: str) -> dict:
     return response.json()
 
 
+def _wait_for_public_state(
+    client: DiskClient, path: str, published: bool, timeout: float = 120.0
+) -> dict:
+    """The meta index lags behind publish/unpublish under load; returns the last meta."""
+    deadline = time.monotonic() + timeout
+    while True:
+        meta = _meta(client, path)
+        is_public = bool(meta.get("public_url")) and bool(meta.get("public_key"))
+        if is_public == published or time.monotonic() >= deadline:
+            return meta
+        time.sleep(1.0)
+
+
 def test_publish_then_unpublish_toggles_public_url(client: DiskClient, make_file):
     path = make_file(name="publish-me.txt")
 
@@ -23,7 +38,7 @@ def test_publish_then_unpublish_toggles_public_url(client: DiskClient, make_file
         f"publish {path} failed: HTTP {published.status_code} {published.text}"
     )
 
-    meta = _meta(client, path)
+    meta = _wait_for_public_state(client, path, published=True)
     public_key = meta.get("public_key")
     assert meta.get("public_url"), f"public_url missing after publish: {meta}"
     assert public_key, f"public_key missing after publish: {meta}"
@@ -41,6 +56,6 @@ def test_publish_then_unpublish_toggles_public_url(client: DiskClient, make_file
         f"unpublish {path} failed: HTTP {unpublished.status_code} {unpublished.text}"
     )
 
-    meta = _meta(client, path)
+    meta = _wait_for_public_state(client, path, published=False)
     assert meta.get("public_url") is None, f"public_url still present after unpublish: {meta}"
     assert meta.get("public_key") is None, f"public_key still present after unpublish: {meta}"

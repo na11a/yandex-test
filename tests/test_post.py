@@ -6,7 +6,7 @@ from client.disk_client import DiskClient
 from conftest import unique_path
 
 
-def _wait_for_status(client: DiskClient, path: str, expected: int, timeout: float = 5.0) -> int:
+def _wait_for_status(client: DiskClient, path: str, expected: int, timeout: float = 120.0) -> int:
     """Poll list_meta(path) until it returns expected, absorbing the backend's
     brief post-move index lag; returns the last observed status code."""
     deadline = time.monotonic() + timeout

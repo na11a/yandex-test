@@ -6,7 +6,7 @@ from client.disk_client import DiskClient
 from conftest import unique_path
 
 
-def assert_gone(client: DiskClient, path: str, timeout: float = 60.0):
+def assert_gone(client: DiskClient, path: str, timeout: float = 120.0):
     """Poll list_meta until the resource is gone (404), tolerating delete propagation lag."""
     deadline = time.monotonic() + timeout
     while True:

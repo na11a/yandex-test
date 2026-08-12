@@ -1,54 +1,66 @@
 # Yandex.Disk REST API Autotests
 
-Automated tests for the [Yandex.Disk REST API](https://yandex.com/dev/disk-api/doc/en/index.md),
-written in Python 3 with `pytest` and `requests`. The suite exercises the API's GET, POST, PUT and
-DELETE methods against the live production host `https://cloud-api.yandex.net` (all paths under
-`/v1/`), covering happy-path lifecycles, negative/error cases, asynchronous operation polling,
-publish and trash lifecycles, parametrized cases, and JSON schema validation.
+Automated tests for the [Yandex.Disk REST API](https://yandex.ru/dev/disk/api/concepts/about-docpage/),
+written in Python 3 with `pytest` and `requests`. The suite runs against the live production host
+`https://cloud-api.yandex.net` (all paths under `/v1/`) and covers:
 
-## Requirements
+- **GET** — disk metadata, resource meta and folder listing, flat file list, last-uploaded,
+  download/upload URL retrieval.
+- **POST** — copy and move of files and folders.
+- **PUT** — folder creation, the two-step file upload (get upload href, then PUT the bytes),
+  and a download-and-verify round trip.
+- **DELETE** — deleting files and folders, including `permanently=true`.
+- Add-ons: negative/error cases (401/404/409), asynchronous operation polling (202 + operation
+  status), publish/unpublish lifecycle, trash lifecycle (delete → restore → empty), parametrized
+  data-driven cases, and JSON response schema validation (`jsonschema`).
+
+There is no mock: tests hit production, so every test isolates itself inside a unique
+`disk:/autotests-<uuid>` folder created by a fixture and removed in teardown regardless of outcome.
+
+## Stack
 
 - Python 3.10+
-- The dependencies pinned in `requirements.txt`: `pytest`, `requests`, `python-dotenv`,
-  `jsonschema`, `pytest-html`.
-
-## Local setup
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-## Obtaining an OAuth token
-
-The token authorises full read/write access to one account's Disk, so **use a non-personal
-(throwaway/service) Yandex account**, never your personal one.
-
-1. Register an "app for API access" at https://oauth.yandex.ru while logged into the throwaway
-   account.
-2. Grant the scopes `cloud_api:disk.read` and `cloud_api:disk.write` (add `cloud_api:disk.info`
-   for quota assertions).
-3. Obtain a token via the implicit flow, opening this URL in the browser session of the throwaway
-   account and copying the token from the redirect fragment:
-   `https://oauth.yandex.ru/authorize?response_type=token&client_id=<ClientID>`
+- `pytest` (test runner) + `requests` (HTTP client)
+- `python-dotenv` — loads the token from a git-ignored `.env`
+- `jsonschema` — response shape validation
+- `pytest-html` — HTML report (JUnit XML comes from pytest core)
 
 ## Configuration
 
 The token is read from the `YANDEX_DISK_TOKEN` environment variable, optionally loaded from a
-git-ignored `.env` file. Copy the example and fill in your token:
+git-ignored `.env` file at the repo root. Copy the example and fill in your token:
 
 ```bash
 cp .env.example .env
 # edit .env and set YANDEX_DISK_TOKEN
 ```
 
-`.env` is git-ignored — never commit a real token. Only `.env.example` (a placeholder) is committed.
+**Never commit the token.** `.env` is git-ignored; only `.env.example` (a placeholder) is
+committed. Alternatively export it for the current shell:
+
+```bash
+export YANDEX_DISK_TOKEN=<your token>
+```
 
 ## Running the tests
 
 ```bash
-pytest                 # run the whole suite
-pytest -m smoke        # fast critical-path subset
-pytest -m regression   # full functional coverage
+pytest                        # whole suite
+pytest tests/test_get.py      # a single file
+pytest -m smoke               # fast critical-path subset
+pytest -m regression          # full functional coverage
 ```
+
+## Reports
+
+Every run generates reports automatically (configured via `addopts` in `pytest.ini`):
+
+- `report.html` — self-contained pytest-html report, open it in a browser;
+- `report.xml` — JUnit XML for CI systems.
+
+Both are git-ignored artifacts.
+
+## API references
+
+- API docs: https://yandex.ru/dev/disk/api/concepts/about-docpage/
+- Interactive Polygon: https://yandex.ru/dev/disk/poligon/
