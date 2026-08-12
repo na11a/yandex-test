@@ -6,6 +6,7 @@ from client.disk_client import DiskClient
 
 
 @pytest.mark.smoke
+@pytest.mark.regression
 def test_disk_info(client: DiskClient):
     response = client.disk_info()
     assert response.status_code == 200, response.text
@@ -15,6 +16,7 @@ def test_disk_info(client: DiskClient):
 
 
 @pytest.mark.smoke
+@pytest.mark.regression
 def test_list_meta_on_test_folder(client: DiskClient, test_folder: str):
     response = client.list_meta(test_folder)
     assert response.status_code == 200, response.text
@@ -63,6 +65,7 @@ def test_last_uploaded_returns_items(client: DiskClient, test_folder: str, make_
 
 
 @pytest.mark.smoke
+@pytest.mark.regression
 def test_get_upload_href(client: DiskClient, test_folder: str):
     path = f"{test_folder}/{uuid.uuid4()}-upload.txt"
     response = client.get_upload_href(path)
@@ -73,6 +76,7 @@ def test_get_upload_href(client: DiskClient, test_folder: str):
 
 
 @pytest.mark.smoke
+@pytest.mark.regression
 def test_get_download_href(client: DiskClient, test_folder: str, make_file):
     path = make_file(name="download.txt")
 

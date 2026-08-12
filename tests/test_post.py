@@ -24,6 +24,7 @@ def _make_empty_folder(client: DiskClient, test_folder: str, name: str) -> str:
 
 
 @pytest.mark.smoke
+@pytest.mark.regression
 def test_copy_file(client: DiskClient, test_folder: str, make_file):
     source = make_file("copy-src.txt")
     destination = unique_path(test_folder, "copy-dst.txt")
@@ -38,6 +39,7 @@ def test_copy_file(client: DiskClient, test_folder: str, make_file):
 
 
 @pytest.mark.smoke
+@pytest.mark.regression
 def test_move_file(client: DiskClient, test_folder: str, make_file):
     source = make_file("move-src.txt")
     destination = unique_path(test_folder, "move-dst.txt")
