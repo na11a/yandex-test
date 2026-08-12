@@ -15,3 +15,4 @@ venv/
 report.html
 *.xml
 assets/
+.worktrees/

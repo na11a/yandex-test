@@ -51,6 +51,11 @@ pytest -m smoke               # fast critical-path subset
 pytest -m regression          # full functional coverage
 ```
 
+**Do not run the tests in parallel** (e.g. `pytest -n <N>` via `pytest-xdist`): all tests share
+one Disk account, and concurrent runs trigger transient server-side errors — HTTP 500
+`InternalServerError` on publish/unpublish, stuck async operations, missing `public_url` after a
+successful publish. Run the suite serially.
+
 ## Reports
 
 Every run generates reports automatically (configured via `addopts` in `pytest.ini`):
