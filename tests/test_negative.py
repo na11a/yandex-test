@@ -56,7 +56,6 @@ def test_upload_no_overwrite_over_existing_file_returns_409(
     client: DiskClient, make_file
 ):
     path = make_file(name="existing.txt", content=b"original")
-    # get_upload_href without overwrite must refuse to clobber the existing file.
     response = client.get_upload_href(path, overwrite=False)
     assert response.status_code == 409, (
         f"expected 409, got {response.status_code}: {response.text}"

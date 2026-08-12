@@ -49,7 +49,6 @@ def _wait_in_trash(client: DiskClient, origin_path: str, timeout: int = 30) -> d
 
 
 def _wait_absent_from_trash(client: DiskClient, origin_path: str, timeout: int = 30) -> None:
-    """Wait until no trash item carries the given origin_path."""
     deadline = time.monotonic() + timeout
     while True:
         if _find_in_trash(client, origin_path) is None:
