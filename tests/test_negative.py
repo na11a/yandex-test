@@ -1,7 +1,7 @@
 import pytest
 
 from client.disk_client import DiskClient
-from conftest import unique_path
+from tests.helpers import unique_path
 
 
 def _assert_error_body(response):
@@ -38,12 +38,8 @@ def test_missing_path_returns_404(client: DiskClient, test_folder: str):
 
 
 @pytest.mark.regression
-def test_mkdir_existing_folder_returns_409(client: DiskClient, test_folder: str):
-    path = unique_path(test_folder, "conflict-dir")
-    created = client.mkdir(path)
-    assert created.status_code == 201, (
-        f"setup mkdir failed: HTTP {created.status_code} {created.text}"
-    )
+def test_mkdir_existing_folder_returns_409(client: DiskClient, make_folder):
+    path = make_folder("conflict-dir")
     response = client.mkdir(path)
     assert response.status_code == 409, (
         f"expected 409, got {response.status_code}: {response.text}"

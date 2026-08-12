@@ -1,7 +1,7 @@
 import pytest
 
 from client.disk_client import DiskClient
-from conftest import unique_path
+from tests.helpers import unique_path
 
 
 @pytest.mark.smoke

@@ -2,7 +2,7 @@ import pytest
 from jsonschema import validate
 
 from client.disk_client import DiskClient
-from conftest import load_schema
+from tests.helpers import load_schema
 
 pytestmark = pytest.mark.regression
 
