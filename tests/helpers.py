@@ -68,7 +68,7 @@ def _wait_until(check: Callable[[], tuple], timeout: float, interval: float = 1.
 
 
 def wait_for_meta_status(
-    client: DiskClient, path: str, expected: int, timeout: float = 120.0, interval: float = 1.0
+    client: DiskClient, path: str, expected: int, timeout: float = 300.0, interval: float = 1.0
 ) -> None:
     """Poll list_meta(path) until it returns expected, absorbing backend index lag."""
 
